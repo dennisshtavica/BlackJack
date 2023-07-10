@@ -1,0 +1,71 @@
+// const initialY = 200; // Initial y position of the chips
+
+  // function initializeChips() {
+  //   chip10.x = 100;
+  //   chip10.y = initialY;
+
+  //   chip100.x = 300;
+  //   chip100.y = initialY;
+
+  //   chip500.x = 500;
+  //   chip500.y = initialY;
+  // }
+
+  // function animateChip(chip) {
+  //   const targetY = initialY - 20; // Adjust the value to control the upward movement
+  //   const duration = 0.2; // Animation duration in seconds
+  //   const frames = 20; // Number of frames for the animation
+  //   const dy = (targetY - chip.y) / frames; // Distance to move per frame
+  //   let frameCount = 0;
+
+  //   const ticker = new PIXI.Ticker();
+  //   ticker.add(() => {
+  //     chip.y += dy;
+  //     frameCount++;
+
+  //     if (frameCount === frames) {
+  //       ticker.stop();
+  //       chip.y = targetY; // Set the chip's position to the target position
+  //       chip.eventMode = "none"; // Disable further clicks on the chip
+  //     }
+  //   });
+
+  //   ticker.start();
+  // }
+
+  // function chipClickHandler(chip) {
+  //   animateChip(chip);
+  //   chip.on("pointerdown", () => {}); // Remove the click event listener
+
+  //   // Adjust the chip positions if needed
+  //   if (chip === chip10) {
+  //     chip100.y = initialY;
+  //     chip500.y = initialY;
+  //   } else if (chip === chip100) {
+  //     chip10.y = initialY;
+  //     chip500.y = initialY;
+  //   } else if (chip === chip500) {
+  //     chip10.y = initialY;
+  //     chip100.y = initialY;
+  //   }
+  // }
+
+  // initializeChips();
+
+  // function placeChip(texture, x, y) {
+  //   const clonedChip = new PIXI.Sprite(texture);
+  //   clonedChip.x = x;
+  //   clonedChip.y = y;
+  //   app.stage.addChild(clonedChip);
+  // }
+
+
+
+
+
+
+let dealerSum = 0
+let playerSum = 0
+
+let dealerAceCount = 0;
+let yourAceCount = 0; 
