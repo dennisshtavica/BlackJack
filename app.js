@@ -1,5 +1,3 @@
-// import * as PIXI from 'pixi.js';
-
 const app = new PIXI.Application({
   width: window.innerWidth,
   height: window.innerHeight,
@@ -13,16 +11,16 @@ document.body.appendChild(app.view);
 // Load the background image
 const backgroundTexture = PIXI.Texture.from("./images/startGameBg.png");
 
-// Create a sprite using the background texture
+
 const background = new PIXI.Sprite(backgroundTexture);
 background.width = app.screen.width;
 background.height = app.screen.height;
 app.stage.addChild(background);
 
-// Load the displacement texture
+
 const displacementTexture = PIXI.Texture.from("./images/displacement-map.jpg");
 
-// Create the displacement sprite and filter
+
 const displacementSprite = new PIXI.Sprite(displacementTexture);
 const displacementFilter = new PIXI.filters.DisplacementFilter(
   displacementSprite
@@ -37,7 +35,7 @@ app.ticker.add(function () {
   displacementSprite.x++;
 });
 
-// Add Blackjack Title
+
 const title = PIXI.Texture.from("./images/BLACKJACK.png");
 const BJTitle = new PIXI.Sprite(title);
 
@@ -62,21 +60,26 @@ buttonContainer.eventMode = "dynamic";
 buttonContainer.buttonMode = true;
 
 const buttonBackground = new PIXI.Graphics();
-buttonBackground.beginFill(0xff6060); // Set the color of the rectangle
-buttonBackground.drawRoundedRect(0, 0, 294, 83, 59); // Set the size of the rectangle
+buttonBackground.beginFill(0xff6060); 
+buttonBackground.drawRoundedRect(0, 0, 294, 83, 59); 
 buttonBackground.endFill();
 
 buttonContainer.addChild(buttonBackground);
 
 buttonContainer.position.set(centerX - buttonContainer.width / 2, 450);
 
+const buttonSound = new Howl({
+  src: ['./sounds/ClickBtn.mp3'],
+  preload: true,
+  volume: 2.0, 
+});
+
 const playButton = new PIXI.Text("Play Game", {
   fill: 0xffffff,
   fontFamily: "Slackey",
   fontSize: 30,
 });
-// playButton.x = app.screen.width / 2 - playButton.width / 2;
-// playButton.y = app.screen.height / 2 - playButton.height / 2;
+
 playButton.anchor.set(0.5); // Center the text within the button
 playButton.position.set(
   buttonBackground.width / 2,
@@ -90,27 +93,40 @@ buttonContainer.on("pointerover", () => {
 buttonContainer.on("pointerout", () => {
   app.renderer.view.style.cursor = "auto";
 });
-// playButton.on("pointerdown", startGame);
-buttonContainer.on("pointerdown", startGame);
-buttonContainer.addChild(playButton);
-// app.stage.addChild(playButton);
-app.stage.addChild(buttonContainer);
-// Function to set up the game
-// function setup() {}
 
-// // Function to start the game
+buttonContainer.on("pointerdown", () => {
+  buttonSound.play(),
+  startGame()
+});
+buttonContainer.addChild(playButton);
+
+app.stage.addChild(buttonContainer);
+
+
+const sound = new Howl({
+  src: ["./sounds/kirby.mp3"],
+  volume: 1.0
+})
+
+function decreaseVolume() {
+  sound.volume(sound.volume() - 0.9); 
+}
+
+sound.play()
+
+
 function startGame() {
-  // Add your game logic here
+
   app.stage.removeChild(playButton);
   app.stage.removeChild(buttonContainer);
 
-  // Clear the background
+
   app.stage.removeChild(background);
 
   app.stage.removeChild(BJTitle);
 
+  decreaseVolume()
 
-  // Call a function to initialize the next page
   initializeNextPage();
 }
 
@@ -153,8 +169,8 @@ const dealBg = new PIXI.Graphics()
 dealBtnCtn.eventMode = 'dynamic';
 dealBtnCtn.buttonMode = true;
 
-dealBg.beginFill(0xff6060); // Set the color of the rectangle
-dealBg.drawRoundedRect(0, 0, 107, 61, 59); // Set the size of the rectangle
+dealBg.beginFill(0xff6060); 
+dealBg.drawRoundedRect(0, 0, 107, 61, 59); 
 dealBg.endFill();
 
 dealBtnCtn.addChild(dealBg)
@@ -162,22 +178,16 @@ dealBtnCtn.position.set(377, 279)
 // Add Hit and Stand buttons
 const dealButton = new PIXI.Text('Deal', { fill: 0xffffff, fontFamily: "Slackey", fontSize: 24 });
 dealButton.anchor.set(0.5)
-// hitButton.x = 776;
-// hitButton.y = 680;
+
 dealButton.position.set(
   dealBg.width / 2,
   dealBg.height / 2
 )
 
 
-// const dealButton = new PIXI.Text("Deal", {
-//   fill: 0xffffff,
-//   fontSize: 48,
-//   fontWeight: "bold",
-//   fontFamily: "Slackey",
-// });
-
 function initializeNextPage() {
+  decreaseVolume()
+
 
   const additionalSprite = new PIXI.Sprite(
     PIXI.Texture.from("./images/startGameBg.png")
@@ -207,18 +217,14 @@ function initializeNextPage() {
 dealButton.eventMode = "dynamic"
 dealButton.buttonMode = true
 
-dealBtnCtn.on("pointerdown", transitionToGame)
+dealBtnCtn.on("pointerdown", () => {
+  buttonSound.play(),
+  transitionToGame()
+})
 dealBtnCtn.addChild(dealButton)
-// hitButton.on('pointerdown', hit);
+
 
 app.stage.addChild(dealBtnCtn);
-
-  // dealButton.eventMode = "dynamic";
-  // dealButton.buttonMode = true;
-  // dealButton.x = 300;
-  // dealButton.y = 300;
-  // dealButton.on("pointerdown", transitionToGame); // Transition to the game when "Deal" button is clicked
-  // app.stage.addChild(dealButton);
 
   purchaseText.x = 100;
   purchaseText.y = 300;
@@ -228,8 +234,6 @@ app.stage.addChild(dealBtnCtn);
   chip10.eventMode = "dynamic";
 
   chip10.on("pointerdown", () => {
-    // placeChip(chip10Texture, chip10.x, chip10.y);
-    // chipClickHandler(chip10);
     purchaseAmount += 10;
     totalMoney -= 10;
     updateText();
@@ -290,37 +294,6 @@ function shuffleDeck() {
 }
 
 
-
- 
-// function dealCard(sum) {
-//   const card = deck.pop();
-//   // hand.push(card);
-//   // const lastCardIndex = hand.length - 1;
-//   const cardValue = getCardValue(card);
-//   sum += cardValue;
-//   // const cardX = 486 + (hand === playerHand ? lastCardIndex : -lastCardIndex) * 100;
-//   // const cardY = 300;
-//   // createCardSprite(cardTextures[card], cardX, cardY);
-//   return sum;
-// }
-
-// function dealInitialCards() {
-//   playerSum = dealCard(playerHand, playerSum);
-//   dealerSum = dealCard(dealerHand, dealerSum);
-//   playerSum = dealCard(playerHand, playerSum);
-//   dealerSum = dealCard(dealerHand, dealerSum);
-
-
-// }
-
-// Deal initial cards
-// function dealInitialCards() {
-//   playerHand.push(deck.pop());
-//   dealerHand.push(deck.pop());
-//   playerHand.push(deck.pop());
-//   dealerHand.push(deck.pop());
-// }
-
 function dealInitialCards() {
   playerHand.push(deck.pop());
   playerHand.push(deck.pop());
@@ -333,23 +306,8 @@ function dealInitialCards() {
   while(dealerSum < 17){
     dealerHand.push(deck.pop());
       dealerSum += getHandValue(dealerHand);
-  
     }
-    // dealerSum += getCardValue(extractCardRank(dealerHand))
-    // dealerHand.push(deck.pop());
-    // dealerHand.push(deck.pop());
   }
-
-  
-// function dealerHit() {
-//   while (dealerSum < 17) {
-//     dealerHand.push(deck.pop());
-//     const lastCardIndex = dealerHand.length - 1;
-//     const lastCardX = 961 + lastCardIndex * 100;
-//     createCardSprite(cardTextures[dealerHand[lastCardIndex]], lastCardX, 300);
-//     dealerSum = getHandValue(dealerHand);
-//   }
-// }
 
 function countFirstCardsSum(player) {
   let playerSumm = 0;
@@ -372,22 +330,6 @@ function revealHiddenCard() {
   hiddenCardSprite.rotation = -0.5
 }
 
-
-// function getValue(card) {
-//   let data = card.split("-"); // "4-C" -> ["4", "C"]
-//   let value = data[0];
-
-//   if (isNaN(value)) { //A J Q K
-//       if (value == "A") {
-//           return 11;
-//       }
-//       return 10;
-//   }
-//   return parseInt(value);
-// }
-
-// console.log(getValue(playerHand));
-
 // Create card sprite
 function createCardSprite(texture, x, y) {
   const sprite = new PIXI.Sprite(texture);
@@ -407,7 +349,6 @@ function displayCards() {
 
   for (let i = 0; i < playerHand.length; i++) {
     const playerCardX = 486 + i * cardSpacing;
-    // createCardSprite(cardTextures[playerHand[i]], playerCardX, 300);
     gsap.fromTo(createCardSprite(cardTextures[playerHand[0]]), {x: 800, y: -400}, {x: 400, y: 350, duration: 1,  rotation: -0.5})
     gsap.fromTo(createCardSprite(cardTextures[playerHand[1]]), {x: 800, y: -400}, {x: 470, y: 290, duration: 1,  rotation: -0.2, delay: 1})
   }
@@ -415,11 +356,6 @@ function displayCards() {
 
   for (let i = 0; i < dealerHand.length; i++) {
     const dealerCardX = 1000 + i * cardSpacing;
-    // dealerHand[0] = BackCard
-    // createCardSprite(cardTextures[dealerHand[i]], dealerCardX, 300);
-    // gsap.fromTo(createCardSprite(BackCard), {x: 800, y: -400}, {x: 950, y: 350, duration: 1,  rotation: -0.5, delay: 0.5})
-    // gsap.fromTo(createCardSprite(cardTextures[dealerHand[i]]), {x: 800, y: -400}, {x: dealerCardX, y: 290, duration: 1,  rotation: -0.2, delay: 1.5})
-    // gsap.fromTo(createCardSprite(cardTextures[dealerHand[0]]), {x: 800, y: -400}, {x: 1000, y: 350, duration: 1,  rotation: -0.5, delay: 0.5})
     gsap.fromTo(createCardSprite(BackCard), {x: 800, y: -400}, {x: 1000, y: 350, duration: 1,  rotation: -0.5, delay: 0.5})
     gsap.fromTo(createCardSprite(cardTextures[dealerHand[1]]), {x: 800, y: -400}, {x: 1070, y: 290, duration: 1,  rotation: -0.2, delay: 1.5})
 
@@ -428,18 +364,8 @@ function displayCards() {
       gsap.fromTo(createCardSprite(cardTextures[dealerHand[3]]), {x: 800, y: -400}, {x: 1270, y: 260, duration: 1, rotation: 0.5, delay: 2.5})
 
     }
-
-
   }
-
-  // playerSum = getCardValue(playerHand);
-  // dealerSum = getCardValue(dealerHand);
-
 }
-
-
-
-
 
 let playerTextSum = new PIXI.Text(`${playerSum}`, {
   fill: 0xffffff,
@@ -459,15 +385,12 @@ dealerTextSum.y = 100
 
 function updateSum(){
   playerTextSum.text = `${playerSum}`
-  // dealerTextSum.text = `${dealerSum}`
 }
 
 function updateDealerSum(){
   dealerTextSum.text = `${dealerSum}`
 }
 
-
-// Function to display the sum of cards on the stage
 function displayCardSum(sum, x, y) {
   const sumText = new PIXI.Text(`${sum}`, {
     fill: 0xffffff,
@@ -490,9 +413,6 @@ function getCardValue(rank) {
   }
 }
 
-
-
-// Calculate hand value
 function getHandValue(hand) {
   let value = 0;
   // let numAces = 0;
@@ -510,12 +430,10 @@ function getHandValue(hand) {
       value += parseInt(rank);
     }
   }
-
   // while (value > 21 && numAces > 0) {
   //   value -= 10;
   //   numAces--;
   // }
-
   return value;
 }
 
@@ -545,56 +463,25 @@ function sumAllDealerCards() {
   return sum;
 }
 
-// console.log(extractCardRank("2-C"));
-// console.log(extractCardRank("2-C"));
-// console.log(extractCardRank(playerHand));
-
-
-// function endGame() {
-//   const playerValue = getHandValue(playerHand);
-//   const dealerValue = getHandValue(dealerHand);
-
-//   if (playerValue > 21) {
-//     console.log('Player Busts! You lose.');
-//   } else if (dealerValue > 21) {
-//     console.log('Dealer Busts! You win.');
-//   } else if (playerValue > dealerValue) {
-//     console.log('You win!');
-//   } else if (playerValue < dealerValue) {
-//     console.log('You lose.');
-//   } else {
-//     console.log('It\'s a tie!');
-//   }
-// }
-
 // Shuffle the deck and deal initial cards
 shuffleDeck();
 console.log(deck)
 console.log(deck.pop());
 dealInitialCards();
-// distributeInitialCards()
 
 console.log(dealerHand);
-// Display initial cards
-// displayCards();
+
 displayCards()
 
 setTimeout(() => {
   playerSum = countFirstCardsSum(playerHand)
-  // dealerSum = countFirstCardsSum(dealerHand)
-// const playerSum2 = countFirstCardsSum(playerHand);
-// const dealerSum2 = countFirstCardsSum(dealerHand);
-// const dealerSum2 = getCardValue(extractCardRank(dealerHand[1]));
-  // dealerSum = getCardValue(extractCardRank(dealerHand[1]))
   dealerSum = sumDealerCards()
   app.stage.addChild(playerTextSum)
   app.stage.addChild(dealerTextSum)
 
   updateSum()
   updateDealerSum()
-    // displayCardSum(playerSum, 650, 100);
-  // displayCardSum(dealerSum, 1125, 100);
-  
+
   console.log(playerSum);
   console.log(dealerSum);
 
@@ -613,20 +500,7 @@ function hit() {
   const cardSpacing2 = 100
   // let hitCardX = 470;
   let hitCardX = 470 + (playerHand.length - 2) * 100;
-
     gsap.fromTo(createCardSprite(cardTextures[playerHand[playerHand.length - 1]]), {x: 800, y: -400}, {x: hitCardX, y: 250, duration: 1,  rotation: 0.2})
-
-
-    // if(playerHand[2]){
-    //   gsap.fromTo(createCardSprite(cardTextures[playerHand[2]]), {x: 800, y: -400}, {x: 570, y: 250, duration: 1,  rotation: 0.2})
-    // }
-
-    // if(playerHand[3]){
-    //   gsap.fromTo(createCardSprite(cardTextures[playerHand[3]]), {x: 800, y: -400}, {x: 670, y: 260, duration: 1,  rotation: 0.5})
-    // }
-    // gsap.fromTo(createCardSprite(cardTextures[dealerHand[2]]), {x: 800, y: -400}, {x: 1170, y: 250, duration: 1, rotation: 0.2, delay: 2})
-    // gsap.fromTo(createCardSprite(cardTextures[playerHand[0]]), {x: 800, y: -400}, {x: 400, y: 350, duration: 1,  rotation: -0.5})
-
 
     playerSum += getCardValue(extractCardRank(playerHand[2]))
     // displayCardSum(playerSum, 650, 120);
@@ -641,13 +515,11 @@ function hit() {
 
 let canStand = true
 
-
 function stand() {
 
   if(!canStand){
     return
   }
-
 
   canStand = false
   canHit = false
@@ -665,40 +537,58 @@ function stand() {
   console.log(dealerSum);
 
   let message = ""
+  // let ChooseWL = new PIXI.Container()
+  const rectangle = new PIXI.Graphics();
+  rectangle.beginFill(0x000000);
+  rectangle.drawRoundedRect(0, 0, 448, 246, 35);
+  rectangle.endFill();
+  rectangle.x = (app.screen.width - rectangle.width) / 2;
+  rectangle.y = (app.screen.height - rectangle.height) / 2;
+  app.stage.addChild(rectangle);
 
   if(playerSum > 21){
-    message = "You lose"
+    message = "You lost"
   } 
   else if(dealerSum > 21){
-    message = "You win"
+    message = "You won"
   }
   else if(playerSum == dealerSum){
     message = "Tie"
   }
   else if(playerSum > dealerSum){
-    message = "You win"
+    message = "You won"
   }
   else if(playerSum < dealerSum){
-    message = "You lose"
+    message = "You lost"
   }
 
   let chooseWiner = new PIXI.Text(`${message}`, {
-     fill: 0xffffff,
-    fontSize: 34,
-    fontFamily: "Slackey",
+     fill: 0xFF7272,
+    fontSize: 60,
+    fontFamily: "Minnie",
   })
 
-  chooseWiner.x = 400
-  chooseWiner.y = 400
+  chooseWiner.anchor.set(0.5)
+  chooseWiner.position.set(rectangle.width / 2, rectangle.height / 2 - 50);
+  rectangle.addChild(chooseWiner)
 
-  
+  // const backButton = new PIXI.Text("Back Home", {
+  //   fill: 0xffffff,
+  //   fontSize: 24,
+  //   fontFamily: "Slackey",
+  // });
 
-  app.stage.addChild(chooseWiner)
+  // backButton.anchor.set(0.5);
+  // backButton.x = rectangle.width / 2;
+  // backButton.y = rectangle.height / 2 + 20;
+  // backButton.eventMode = "dynamic";
+  // backButton.buttonMode = true;
+  // backButton.on("pointerdown", startGame);
+  // rectangle.addChild(backButton);
 
+  app.stage.addChildAt(rectangle, app.stage.children.length - 1);
 }
 
-
-// console.log("Player's sum:", playerSum2);
 
 const hitBtnCtn = new PIXI.Container()
 const hitBg = new PIXI.Graphics()
@@ -706,17 +596,16 @@ const hitBg = new PIXI.Graphics()
 hitBtnCtn.eventMode = 'dynamic';
 hitBtnCtn.buttonMode = true;
 
-hitBg.beginFill(0xff6060); // Set the color of the rectangle
-hitBg.drawRoundedRect(0, 0, 107, 61, 59); // Set the size of the rectangle
+hitBg.beginFill(0xff6060); 
+hitBg.drawRoundedRect(0, 0, 107, 61, 59); 
 hitBg.endFill();
 
 hitBtnCtn.addChild(hitBg)
 hitBtnCtn.position.set(694, 603)
+
 // Add Hit and Stand buttons
 const hitButton = new PIXI.Text('Hit', { fill: 0xffffff, fontFamily: "Slackey", fontSize: 24 });
 hitButton.anchor.set(0.5)
-// hitButton.x = 776;
-// hitButton.y = 680;
 hitButton.position.set(
   hitBg.width / 2,
   hitBg.height / 2
@@ -724,9 +613,19 @@ hitButton.position.set(
 hitButton.eventMode = "dynamic"
 hitButton.buttonMode = true
 
-hitBtnCtn.on("pointerdown", hit)
+const cardFlick = new Howl({
+  src: ["./sounds/cardFlick.mp3"],
+  volume: 2.0
+})
+
+
+hitBtnCtn.on("pointerdown", () => {
+  // buttonSound.play(),
+  hit()
+  cardFlick.play()
+})
 hitBtnCtn.addChild(hitButton)
-// hitButton.on('pointerdown', hit);
+
 
 app.stage.addChild(hitBtnCtn);
 
@@ -736,8 +635,8 @@ const standBg = new PIXI.Graphics()
 standBtnCtn.eventMode = 'dynamic';
 standBtnCtn.buttonMode = true;
 
-standBg.beginFill(0xff6060); // Set the color of the rectangle
-standBg.drawRoundedRect(0, 0, 129, 61, 59); // Set the size of the rectangle
+standBg.beginFill(0xff6060); 
+standBg.drawRoundedRect(0, 0, 129, 61, 59); 
 standBg.endFill();
 
 standBtnCtn.addChild(standBg)
@@ -745,8 +644,7 @@ standBtnCtn.position.set(874, 603)
 // Add Hit and Stand buttons
 const standButton = new PIXI.Text('Stand', { fill: 0xffffff, fontFamily: "Slackey", fontSize: 24 });
 standButton.anchor.set(0.5)
-// hitButton.x = 776;
-// hitButton.y = 680;
+
 standButton.position.set(
   standBg.width / 2,
   standBg.height / 2
@@ -754,9 +652,13 @@ standButton.position.set(
 standButton.eventMode = "dynamic"
 standButton.buttonMode = true
 
-standBtnCtn.on("pointerdown", stand)
+standBtnCtn.on("pointerdown", () => {
+  // buttonSound.play(),
+  stand(),
+  cardFlick.play()
+})
 standBtnCtn.addChild(standButton)
-// hitButton.on('pointerdown', hit);
+
 
 app.stage.addChild(standBtnCtn);
 
@@ -780,13 +682,10 @@ app.stage.addChild(standBtnCtn);
   DealerText.x = 1069;
   DealerText.y = 50;
   app.stage.addChild(DealerText);
-
-  
 }
 
 
 function transitionToGame() {
-
 
   app.stage.removeChild(betsTitle);
 
@@ -817,14 +716,19 @@ function transitionToGame() {
 timeline.to(shufflingText, { x: 700, y: 100, repeat: 2, yoyo: true })
   .to(shufflingText, { alpha: 0, duration: 1 });
 
+  const shuffleSound = new Howl({
+    src: ["./sounds/CardShuffle.mp3"],
+    volume: 2.0
+  })
+
   // Delay the removal of the shuffling indication text
   setTimeout(() => {
     app.stage.removeChild(shufflingText);
 
+  shuffleSound.play()
+
     displayRandomCards();
   }, 2300);
-
- 
 
   // initializeGame();
 }
