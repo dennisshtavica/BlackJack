@@ -105,7 +105,8 @@ app.stage.addChild(buttonContainer);
 
 const sound = new Howl({
   src: ["./sounds/kirby.mp3"],
-  volume: 1.0
+  volume: 1.0,
+  loop: true,
 })
 
 function decreaseVolume() {
